@@ -1,13 +1,15 @@
 from telegram import BotCommand, InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Application, CommandHandler
 
+# Replace with your actual bot token
 TOKEN = "7727818329:AAFhHktxV1WmqtmWTloeJHCH2HQ3Fd39Z3I"
 
 async def start(update: Update, context):
     """Send a welcome message with a game link."""
+    game_link = "https://srivathsavsree.github.io/jump-game/"  # Your GitHub Pages game link
     keyboard = [
         [
-            InlineKeyboardButton("Play Game", url="https://username.github.io/repo-name/game.html")
+            InlineKeyboardButton("Play Game", url=game_link)
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
