@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jump Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      background: lightblue;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let player = { x: 50, y: canvas.height / 2, size: 20, dy: 0 };
+    let pipes = [];
+    let score = 0;
+
+    function createPipe() {
+      let gap = 150;
+      let topHeight = Math.random() * (canvas.height / 2);
+      pipes.push({ x: canvas.width, topHeight, gap });
+    }
+
+    function drawPlayer() {
+      ctx.fillStyle = "red";
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawPipes() {
+      ctx.fillStyle = "green";
+      pipes.forEach(pipe => {
+        ctx.fillRect(pipe.x, 0, 30, pipe.topHeight);
+        ctx.fillRect(pipe.x, pipe.topHeight + pipe.gap, 30, canvas.height);
+      });
+    }
+
+    function update() {
+      player.dy += 0.5;
+      player.y += player.dy;
+
+      pipes.forEach(pipe => {
+        pipe.x -= 3;
+        if (pipe.x + 30 < 0) {
+          pipes.shift();
+          score++;
+        }
+      });
+
+      if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+        createPipe();
+      }
+
+      if (player.y + player.size > canvas.height || player.y - player.size < 0) {
+        gameOver();
+      }
+
+      pipes.forEach(pipe => {
+        if (
+          player.x + player.size > pipe.x &&
+          player.x - player.size < pipe.x + 30 &&
+          (player.y - player.size < pipe.topHeight ||
+            player.y + player.size > pipe.topHeight + pipe.gap)
+        ) {
+          gameOver();
+        }
+      });
+    }
+
+    function gameOver() {
+      alert(`Game Over! Your Score: ${score}`);
+      document.location.reload();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawPlayer();
+      drawPipes();
+      ctx.fillStyle = "black";
+      ctx.font = "24px Arial";
+      ctx.fillText(`Score: ${score}`, 20, 30);
+    }
+
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    canvas.addEventListener("click", () => {
+      player.dy = -10;
+    });
+
+    createPipe();
+    gameLoop();
+  </script>
+</body>
+</html>
